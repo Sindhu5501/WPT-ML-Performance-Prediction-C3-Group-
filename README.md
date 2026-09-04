@@ -199,3 +199,31 @@ WPT-ML-Performance-Prediction/
 * [x] Baseline linear, regularized, and ensemble models benchmarked.
 * [x] 70/15/15 train-validation-test split protocol frozen.
 * [x] Raw dataset inspected and validated for Week 2 preprocessing and EDA.
+
+
+
+---
+
+## 🔍 Day 8: Comprehensive Data Quality Assessment & Cleaning Rules (Intern Discussion 4)
+
+### 1. Feature-by-Feature Data Quality Table
+
+| Feature / Column | Expected Physical Range | Observed Range | Null / Missing (%) | Duplicates | IQR Statistical Outliers (%) | Physical Outlier Status | Quality Verdict |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `dista [mm]` | $[0, 200]\text{ mm}$ | $0.00 - 200.00$ | $0\ (0.00\%)$ | 0 | $0\ (0.00\%)$ | None | **Valid & Clean** |
+| `L(Current1,Current1) [uH]` | $> 0\ \mu\text{H}$ | $107.41 - 188.19$ | $0\ (0.00\%)$ | 0 | $1,306\ (13.06\%)$ | False Outliers (Near-field coupling) | **Physically Valid** |
+| `L(Current3,Current1) [uH]` | $> 0\ \mu\text{H}$ | $7.29 - 161.00$ | $0\ (0.00\%)$ | 0 | $613\ (6.13\%)$ | False Outliers (Proximity effect) | **Physically Valid** |
+| `L(Current3,Current3) [uH]` | $> 0\ \mu\text{H}$ | $105.33 - 183.98$ | $0\ (0.00\%)$ | 0 | $1,562\ (15.62\%)$ | False Outliers (Near-field coupling) | **Physically Valid** |
+| `CplCoef(Current1,Current3) []` | $[0, 1]$ | $0.0678 - 0.8653$ | $0\ (0.00\%)$ | 0 | $0\ (0.00\%)$ | None | **Valid & Clean** |
+| `Data_Type` | String metadata | `Maxwell_Simulation` | $9,998\ (99.98\%)$ | N/A | N/A | Metadata artifact | **Drop Column** |
+
+### 2. Physical Justification of Apparent Statistical Outliers
+* **The "IQR Outlier" Fallacy:** Standard boxplot IQR analysis flags values above $134.98\ \mu\text{H}$ for $L_1$ and $116.82\ \mu\text{H}$ for $M_{13}$ as statistical outliers.
+* **Domain Truth:** These higher values occur strictly when distance $z < 25\text{ mm}$. At extremely close proximity, mutual magnetic induction and magnetic flux concentration spike sharply due to magnetic core/ferrite proximity effects. 
+* **Cleaning Rule:** **Do not trim or clip these values.** Deleting these data points would discard critical short-distance charging behavior and corrupt continuous physical laws.
+
+### 3. Proposed Cleaning Rules & Ingestion Protocol
+1. **Rule 1 (Whitespace Elimination):** Strip all leading and trailing whitespaces from raw column labels.
+2. **Rule 2 (Column Renaming):** Map verbose simulation tags to clean standard identifiers (`distance_mm`, `L1_uH`, `M13_uH`, `L3_uH`, `coupling_coeff`).
+3. **Rule 3 (Metadata Pruning):** Drop `Data_Type` completely, preserving 100% of physical data without information loss.
+4. **Rule 4 (Physical Bounds Assertion):** Assert strictly that $0 \le k \le 1$, $\text{distance} \ge 0$, and all inductances $> 0$.
