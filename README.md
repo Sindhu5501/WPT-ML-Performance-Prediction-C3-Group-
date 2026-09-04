@@ -226,4 +226,26 @@ WPT-ML-Performance-Prediction/
 1. **Rule 1 (Whitespace Elimination):** Strip all leading and trailing whitespaces from raw column labels.
 2. **Rule 2 (Column Renaming):** Map verbose simulation tags to clean standard identifiers (`distance_mm`, `L1_uH`, `M13_uH`, `L3_uH`, `coupling_coeff`).
 3. **Rule 3 (Metadata Pruning):** Drop `Data_Type` completely, preserving 100% of physical data without information loss.
-4. **Rule 4 (Physical Bounds Assertion):** Assert strictly that $0 \le k \le 1$, $\text{distance} \ge 0$, and all inductances $> 0$.
+4. **Rule 4 (Physical Bounds Assertion):** Assert strictly that $0 \le k \le 1$, $\text{distance} \ge 0$, and all inductances $> 0$.\
+
+
+
+---
+
+## 🧹 Day 9: Cleaning Proposal & Mentor Review 3 Checkpoint
+
+### 1. Approved Cleaning Plan Specification
+Following Mentor Review 3, the data treatment protocol is finalized as follows:
+* **Pruning Metadata:** Column `Data_Type` is dropped due to $99.98\%$ missingness, removing non-informative simulation labels without altering numerical features.
+* **Row Preservation Policy:** All $10,000$ simulation rows are retained. Apparent IQR statistical outliers ($13.06\%$ in $L_1$, $6.13\%$ in $M_{13}$, $15.62\%$ in $L_3$) are verified as genuine non-linear magnetic flux spikes occurring at close coil proximities ($z < 25\text{ mm}$).
+* **Column Normalization:** Whitespace stripped and variables mapped to standard identifiers:
+  * `dista [mm]` $\rightarrow$ `distance_mm`
+  * `L(Current1,Current1) [uH]` $\rightarrow$ `L1_uH`
+  * `L(Current3,Current1) [uH]` $\rightarrow$ `M13_uH`
+  * `L(Current3,Current3) [uH]` $\rightarrow$ `L3_uH`
+  * `CplCoef(Current1,Current3) []` $\rightarrow$ `coupling_coeff`
+
+### 2. Mentor Decisions & Sign-Off
+* **Cleaning Approval:** Retaining all continuous spatial steps confirmed; traditional outlier trimming rejected on domain-physics grounds.
+* **Split Integrity Check:** Leakage-safe 70/15/15 partition with seed 42 reaffirmed.
+* **Output Artifact:** The cleaned dataset is exported as `wpt_cleaned_data_v1.csv` for downstream EDA and feature engineering.
