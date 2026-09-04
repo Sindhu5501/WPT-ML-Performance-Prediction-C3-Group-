@@ -78,6 +78,46 @@
   * *Mitigation:* Explicitly drop `Data_Type` before downstream model training.
 * **Out-of-Distribution (OOD) Extrapolation:** Tree-based models (Random Forest) cannot extrapolate beyond observed min ($0\text{ mm}$) and max ($200\text{ mm}$) bounds.
   * *Mitigation:* Set operational inference bounds strictly to $[0, 200]\text{ mm}$ and explore physical/parametric baselines for boundary extensions.
+ 
+
+---
+
+## ⚙️ Day 5: Pipeline Architecture & Experiment Planning
+
+### 1. End-to-End Pipeline Architecture Flowchart
+
+```text
++-----------------------------------------------------------------------------------+
+|                        RAW DATA INGESTION & QUALITY AUDIT                         |
+|   (ANSYS Maxwell 10k Simulation CSV -> Column Strip -> Drop 'Data_Type' Flag)     |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           v
++-----------------------------------------------------------------------------------+
+|                      LEAKAGE-SAFE SPLIT STRATEGY (70/15/15)                       |
+|   Total: 10,000 samples | Train: 7,000 (70%) | Val: 1,500 (15%) | Test: 1,500 (15%)|
+|   Preserved random state seed = 42                                                |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           v
++-----------------------------------------------------------------------------------+
+|                       FEATURE SCALING & PREPROCESSING                             |
+|   Robust / StandardScaler fit strictly on Train (70%), transformed on Val & Test  |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           v
++-----------------------------------------------------------------------------------+
+|                       MODEL BENCHMARK SUITE (PLANNED)                             |
+|   • Baseline: Linear OLS, Ridge Regularization                                    |
+|   • Ensembles: Random Forest, XGBoost Regressor                                   |
+|   • Neural Architectures: Multi-Layer Perceptron (MLP / PyTorch ANN)              |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           v
++-----------------------------------------------------------------------------------+
+|                     EVALUATION SUITE & LOGGING FRAMEWORK                          |
+|   MAE | MSE | RMSE | R² Score | MAPE (%) tracked across coupling (k) & inductances|
++-----------------------------------------------------------------------------------+
 * **Multicollinearity:** $L_1$, $L_3$, and $M_{13}$ are physically coupled via $k = \frac{M}{\sqrt{L_1 L_3}}$.
   * *Mitigation:* Predict $k$ directly from geometry ($z$) or formulate multi-output regression with joint loss objectives.
 
