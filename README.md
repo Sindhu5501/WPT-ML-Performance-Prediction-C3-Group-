@@ -249,3 +249,25 @@ Following Mentor Review 3, the data treatment protocol is finalized as follows:
 * **Cleaning Approval:** Retaining all continuous spatial steps confirmed; traditional outlier trimming rejected on domain-physics grounds.
 * **Split Integrity Check:** Leakage-safe 70/15/15 partition with seed 42 reaffirmed.
 * **Output Artifact:** The cleaned dataset is exported as `wpt_cleaned_data_v1.csv` for downstream EDA and feature engineering.
+
+
+
+---
+
+## 📈 Day 10: Exploratory Data Analysis & Non-Linearity Profiling (Intern Discussion 5)
+
+### 1. Correlation Matrix & Statistical Properties
+
+| Feature Pair | Pearson Correlation ($r$) | Spearman Rank ($\rho$) | Relationship Profile |
+| :--- | :---: | :---: | :--- |
+| `distance_mm` vs. `coupling_coeff` | **-0.948** | **-1.000** | Strictly monotonic inverse non-linear decay |
+| `distance_mm` vs. `M13_uH` | **-0.885** | **-1.000** | Strict monotonic decay with steep near-field drop |
+| `distance_mm` vs. `L1_uH` | **-0.749** | **-0.961** | Core proximity effect saturation beyond 35 mm |
+| `distance_mm` vs. `L3_uH` | **-0.698** | **-0.690** | Highly non-linear plateau |
+| `M13_uH` vs. `coupling_coeff` | **+0.980** | **+1.000** | Physical coupling law: $k \propto M$ |
+
+### 2. Physical & Mathematical Interpretation of Visualizations
+* **The Monotonicity Contrast ($r = -0.948$ vs. $\rho = -1.000$):** While the linear Pearson correlation is $-0.948$, the Spearman rank correlation is a perfect **$-1.000$**. This confirms that electromagnetic coupling is strictly monotonic, but non-linear (decaying exponentially / following inverse power laws).
+* **Near-Field Proximity Spike ($0 - 25\text{ mm}$):** Mutual inductance drops by over **53%** (from $161.0\ \mu\text{H}$ down to $75.6\ \mu\text{H}$) within the first $25\text{ mm}$ alone. This explains why standard linear regression yielded a $32.2\%$ MAPE, whereas tree-based ensembles handle it smoothly.
+* **Far-Field Asymptotic Flattening ($> 120\text{ mm}$):** Above $120\text{ mm}$, coupling drops below $0.15$ and flattens out, showing positive skewness ($+0.85$) where high-density samples reside in the low-coupling regime.
+* **Data Leakage & Sparsity Check:** Distance values are uniformly distributed across the domain ($0 - 200\text{ mm}$, Skewness $\approx 0.00$), ensuring no unrepresented gap regions exist in the simulation grid.
