@@ -136,3 +136,32 @@ WPT-ML-Performance-Prediction/
 │   └── day5_pipeline_planning.py       # 70/15/15 split pipeline & automated logger
 └── logs/
     └── experiment_log.csv              # Machine-readable experiment records
+
+
+
+
+
+---
+
+## 📑 Day 6: Pre-Dataset Readiness & Methodology V1 (Mentor Review 2)
+
+### 1. Methodology V1 Specification
+* **Objective:** Establish a mathematically consistent, leakage-safe pipeline to model non-linear electromagnetic parameters across continuous air gaps ($0 - 200\text{ mm}$).
+* **Data Partitioning Protocol (Frozen):**
+  * **Train Set:** 7,000 samples (70.0%)
+  * **Validation Set:** 1,500 samples (15.0%)
+  * **Test Set (Held-out):** 1,500 samples (15.0%)
+  * **Partition Rule:** Seed fixed at `random_state=42`. Preprocessing parameters (min/max, mean/std) are calculated strictly on the training partition to eliminate target/distribution leakage.
+* **Feature Engineering & Transformation:**
+  * Primary predictor: Air-gap distance $z = \text{distance\_mm}$.
+  * Physics-based transformation: Inverse-cube candidate features ($1/z^3$, $\ln(z + \epsilon)$) planned for linear regularized baselines to bridge the non-linear magnetic decay gap.
+* **Model Candidates for Week 2/3 Expansion:**
+  * Baselines: OLS Linear Regression, Ridge ($\alpha=1.0$), Lasso ($\alpha=0.01$).
+  * Non-Parametric Ensembles: Random Forest Regressor ($n=100$, max_depth=None), XGBoost / LightGBM.
+  * Deep Learning: Multi-Layer Perceptron (MLP) with 3 dense layers, ReLU activations, and Adam optimizer.
+* **Evaluation Standards:** All models are ranked against 5 compulsory metrics: MAE, MSE, RMSE, $R^2$, and MAPE.
+
+### 2. Mentor Review 2 Checkpoint & Action Items
+* **Split Validation:** Confirmed that a 70/15/15 split maintains identical continuous density across all three partitions.
+* **Multi-Target Formulation:** Approved training individual models for direct physical parameters ($k$, $M_{13}$) alongside multi-output baseline regressors.
+* **Physical Constraints:** Predicted coupling coefficient values must strictly obey $0.0 \le k \le 1.0$; negative predictions will be clipped during post-processing.
