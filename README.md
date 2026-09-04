@@ -165,3 +165,37 @@ WPT-ML-Performance-Prediction/
 * **Split Validation:** Confirmed that a 70/15/15 split maintains identical continuous density across all three partitions.
 * **Multi-Target Formulation:** Approved training individual models for direct physical parameters ($k$, $M_{13}$) alongside multi-output baseline regressors.
 * **Physical Constraints:** Predicted coupling coefficient values must strictly obey $0.0 \le k \le 1.0$; negative predictions will be clipped during post-processing.
+
+
+
+
+---
+
+## 📊 Day 7: Dataset Receipt & Initial Inspection Report (Week 1 Milestone)
+
+### 1. Raw Dataset Audit & Ingestion Check
+* **Archive Integrity:** Original source file `Problem Statement 3 -FOR SPIRAL COIL DATASET_ (1).csv` verified and locked as untouched raw baseline.
+* **Volume:** 10,000 continuous simulation records, 6 features.
+* **Format:** Comma-Separated Values (CSV), continuous floating-point measurements generated from 3D Finite Element Analysis (ANSYS Maxwell).
+
+### 2. Comprehensive Statistical Summary
+
+| Feature Column | Units | Missing Count | Min | 25% | Median (50%) | 75% | Max | Std Dev |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `dista [mm]` | mm | 0 | 0.0000 | 50.0000 | 100.0000 | 150.0000 | 200.0000 | 57.7437 |
+| `L(Current1,Current1) [uH]` | $\mu\text{H}$ | 0 | 107.4112 | 108.4942 | 109.3394 | 119.0869 | 188.1925 | 16.7479 |
+| `L(Current3,Current1) [uH]` | $\mu\text{H}$ | 0 | 7.2921 | 13.1261 | 25.1705 | 54.6047 | 160.9991 | 36.3868 |
+| `L(Current3,Current3) [uH]` | $\mu\text{H}$ | 0 | 105.3333 | 106.9806 | 107.5889 | 114.1761 | 183.9760 | 16.1027 |
+| `CplCoef(Current1,Current3) []` | - | 0 | 0.0678 | 0.1220 | 0.2325 | 0.4683 | 0.8653 | 0.2295 |
+| `Data_Type` | string | 9,998 | N/A | N/A | N/A | N/A | N/A | N/A |
+
+### 3. First-Look Physical Findings
+* **Monotonicity & Continuity:** Mutual Inductance ($M_{13}$) and Coupling Coefficient ($k$) decrease monotonically as distance increases from $0\text{ mm}$ to $200\text{ mm}$.
+* **Asymptotic Tail:** Beyond $120\text{ mm}$, coupling drops below $0.15$ and flattens asymptotically towards $0.0678$, where inductive transfer becomes negligible.
+* **Secondary Metadata:** The column `Data_Type` contains only 2 non-null simulation markers (`Maxwell_Simulation`) and will be discarded during Week 2 data cleaning without any loss of physical signal.
+
+### 4. Week 1 Gate Sign-Off
+* [x] Problem understanding, technical framing, and candidate methods documented.
+* [x] Baseline linear, regularized, and ensemble models benchmarked.
+* [x] 70/15/15 train-validation-test split protocol frozen.
+* [x] Raw dataset inspected and validated for Week 2 preprocessing and EDA.
