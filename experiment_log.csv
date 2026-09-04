@@ -1,0 +1,4 @@
+Experiment_ID,Model,Val_R2,Val_MAPE(%),Test_R2,Test_MAPE(%),Test_MAE,Test_RMSE
+EXP-01_LinearRegression,LinearRegression,0.901614,32.1812,0.901842,32.2215,0.062512,0.072801
+EXP-02_Ridge_Alpha1.0,Ridge,0.901614,32.1810,0.901842,32.2213,0.062512,0.072801
+EXP-03_RandomForest_N100,RandomForestRegressor,1.000000,0.0152,1.000000,0.0141,0.000045,0.000062
