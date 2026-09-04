@@ -124,3 +124,15 @@
 ### 3. Split Strategy Preservation
 * **Partition:** 70% Train, 15% Validation, 15% Test.
 * **Preservation Rule:** Preserve the continuous monotonic decay curve across training and validation splits while testing interpolation accuracy on unseen sub-intervals.
+
+
+
+WPT-ML-Performance-Prediction/
+├── README.md                           # Cumulative daily reports & documentation
+├── Problem Statement 3 -...csv         # Raw untouched Maxwell simulation dataset
+├── experiments/                        # Experiment execution scripts
+│   ├── day2_experiment.py              # Baseline 80/20 benchmark
+│   ├── day4_data_quality_audit.py      # Schema verification & bound checks
+│   └── day5_pipeline_planning.py       # 70/15/15 split pipeline & automated logger
+└── logs/
+    └── experiment_log.csv              # Machine-readable experiment records
